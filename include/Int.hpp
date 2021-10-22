@@ -4,27 +4,16 @@
 #include "string"
 class Int{
     public:
-    Int():_val("0"){}
-    
-    std::string val(){
-        return this->_val;
-    }
+    Int(std::string val);
 
-    Int operator+(const Int& b){
-        return *this;
-    }
-    Int operator-(const Int& b){
-        return *this;
-    }
-    Int operator*(const Int& b){
-        return *this;
-    }
-    Int operator/(const Int& b){
-        return *this;
-    }
-    Int mod(const Int& b){
-        return *this;
-    }
+    Int(int val);
+    
+    std::string val();
+    // Int operator+(const Int& b);
+    // Int operator-(const Int& b);
+    // Int operator*(const Int& b);
+    // Int operator/(const Int& b);
+    // Int mod(const Int& b);
 
     private:
     std::string _val;
