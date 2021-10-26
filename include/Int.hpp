@@ -12,6 +12,8 @@ class Int{
     Int(const int &val);
     
     Int(const long long &val);
+
+    Int(const std::vector<long long> &val, bool positive=true);
     
     std::string val();
 
