@@ -2,6 +2,7 @@
 #include "string"
 #include "vector"
 #include "cmath"
+#include "algorithm"
 #include "iostream"
 
 Int::Int(const std::string &val){
@@ -27,10 +28,10 @@ Int::Int(const std::string &val){
     long long i = 0;
     long long start_pos = str_len - this->_unit_length;
     for(; i < units-1; i++){
-        this->_val[i] = std::stoll(val.substr(start_pos,start_pos+this->_unit_length));
+        this->_val[i] = std::stoll(val.substr(start_pos,this->_unit_length));
         start_pos -= this->_unit_length;
     }
-    this->_val[i] = std::stoll(val.substr(bias, start_pos+this->_unit_length));
+    this->_val[i] = std::stoll(val.substr(bias, start_pos+this->_unit_length-bias));
 }
 
 Int::Int(const int &val){
@@ -128,7 +129,7 @@ bool Int::is_positive() const{
     return this->_is_positive;
 }
 
-bool Int::operator<(const Int &b){
+bool Int::operator<(const Int &b) const{
     // 正负不同
     if(this->is_positive() != b.is_positive()){
         return b.is_positive();
@@ -160,7 +161,7 @@ bool Int::operator<(const Int &b){
     return false;
 }
 
-bool Int::operator>(const Int &b){
+bool Int::operator>(const Int &b) const{
     // 正负不同
     if(this->is_positive() != b.is_positive()){
         return this->is_positive();
@@ -192,15 +193,15 @@ bool Int::operator>(const Int &b){
     return false;
 }
 
-bool Int::operator<=(const Int &b){
+bool Int::operator<=(const Int &b) const{
     return !this->operator>(b);
 }
 
-bool Int::operator>=(const Int &b){
+bool Int::operator>=(const Int &b) const{
     return !this->operator<(b);
 }
 
-bool Int::operator==(const Int &b){
+bool Int::operator==(const Int &b) const{
     if(this->is_positive() != b.is_positive()){
         return false;
     }
@@ -215,4 +216,45 @@ bool Int::operator==(const Int &b){
         }
     }
     return true;
+}
+
+Int Int::operator+(const Int &b){
+    if(this->is_positive() && b.is_positive()){
+        return this->basic_add(b);
+    }
+    else{
+        throw -1;
+    }
+}
+
+Int Int::basic_add(const Int &b){
+    long long res_units = std::max(this->_units, b._units) + 1;
+    std::vector<long long> res(res_units);
+    long long c = 0;
+    long long end_idx = std::min(this->_units, b._units);
+    int i = 0;
+    for(; i < end_idx; i++){
+        res[i] = this->_val[i] + b._val[i] + c;
+        c = res[i] / this->_BASE;
+        res[i] = res[i] % this->_BASE;
+    }
+    while(this->_units > i){
+        res[i] = this->_val[i] + c;
+        c = res[i] / this->_BASE;
+        res[i] = res[i] % this->_BASE;
+        i++;
+    }
+    while(b._units > i){
+        res[i] = b._val[i] + c;
+        c = res[i] / this->_BASE;
+        res[i] = res[i] % this->_BASE;
+        i++;
+    }
+    while(c !=0 && res_units > i){
+        res[i] = c;
+        c = res[i] / this->_BASE;
+        res[i] = res[i] % this->_BASE;
+        i++;
+    }
+    return Int(res);
 }
