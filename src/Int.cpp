@@ -35,33 +35,6 @@ Int::Int(const std::string &val){
 }
 
 Int::Int(const int &val){
-    this->_val = std::vector<long long>(1);
-    this->_units = 1;
-    if(val < 0){
-        this->_is_positive = false;
-        this->_val[0] = -val;
-        this->_length = static_cast<long long>(log10(-val))+1;
-    }
-    else{
-        this->_is_positive = true;
-        this->_val[0] = val;
-        if (val == 0){
-            this->_length = 1;
-        }
-        else{
-            this->_length = static_cast<long long>(log10(val))+1;
-        }
-    }
-}
-
-Int::Int(const long long &val){
-    if (val >= this->_BASE){
-        this->_units =2;
-    }
-    else{
-        this->_units = 1;
-    }
-    this->_val = std::vector<long long>(this->_units);
     long long val_positive;
     if(val < 0){
         this->_is_positive = false;
@@ -77,6 +50,38 @@ Int::Int(const long long &val){
     else{
         this->_length = static_cast<long long>(log10(val_positive))+1;
     }
+    this->_units = this->length()/this->_unit_length;
+    if(this->length()%this->_unit_length){
+        this->_units += 1;
+    }
+    this->_val = std::vector<long long>(this->_units);
+    for(int i = 0; i < this->_units; i++){
+        this->_val[i] = val_positive%this->_BASE;
+        val_positive = val_positive/this->_BASE;
+    }
+}
+
+Int::Int(const long long &val){
+    long long val_positive;
+    if(val < 0){
+        this->_is_positive = false;
+        val_positive = -val;
+    }
+    else{
+        this->_is_positive = true;
+        val_positive = val;
+    }
+    if(val == 0){
+        this->_length = 1;
+    }
+    else{
+        this->_length = static_cast<long long>(log10(val_positive))+1;
+    }
+    this->_units = this->length()/this->_unit_length;
+    if(this->length()%this->_unit_length){
+        this->_units += 1;
+    }
+    this->_val = std::vector<long long>(this->_units);
     for(int i = 0; i < this->_units; i++){
         this->_val[i] = val_positive%this->_BASE;
         val_positive = val_positive/this->_BASE;
@@ -255,6 +260,40 @@ Int Int::basic_add(const Int &b){
         c = res[i] / this->_BASE;
         res[i] = res[i] % this->_BASE;
         i++;
+    }
+    return Int(res);
+}
+
+Int Int::operator-(){
+    this->_is_positive = !this->_is_positive;
+    return *this;
+}
+
+Int Int::operator*(const Int &b){
+    Int res = this->basic_mul(b);
+    if(this->is_positive() == b.is_positive()){
+        return res;
+    }
+    else{
+        return -res;
+    }
+}
+
+Int Int::basic_mul(const Int &b){
+    long long res_units = this->_units+b._units+1;
+    std::vector<long long> res(res_units, 0);
+    for(int i = 0; i < this->_units; i++){
+        long long c = 0;
+        for(int j = 0; j < b._units; j++){
+            res[i+j] += this->_val[i] * b._val[j]+c;
+            c = res[i+j]/this->_BASE;
+            res[i+j] = res[i+j]%this->_BASE;
+        }
+        res[i+b._units] += c;
+    }
+    if(res[this->_units+b._units] >= this->_BASE){
+        res[this->_units+b._units+1] += res[this->_units+b._units] /this->_BASE;
+        res[this->_units+b._units] = res[this->_units+b._units] % this->_BASE;
     }
     return Int(res);
 }
