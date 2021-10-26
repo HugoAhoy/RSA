@@ -7,11 +7,11 @@
 
 class Int{
     public:
-    Int(std::string val);
+    Int(const std::string &val);
 
-    Int(int val);
+    Int(const int &val);
     
-    Int(long long val);
+    Int(const long long &val);
     
     std::string val();
     // Int operator+(const Int& b);
