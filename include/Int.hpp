@@ -20,12 +20,12 @@ class Int{
     long long length() const;
     bool is_positive() const;
 
-    bool operator >(const Int &b);
-    bool operator <(const Int &b);
-    bool operator <=(const Int &b);
-    bool operator >=(const Int &b);
-    bool operator ==(const Int &b);
-    // Int operator+(const Int& b);
+    bool operator >(const Int &b) const;
+    bool operator <(const Int &b) const;
+    bool operator <=(const Int &b) const;
+    bool operator >=(const Int &b) const;
+    bool operator ==(const Int &b) const;
+    Int operator+(const Int &b);
     // Int operator-(const Int& b);
     // Int operator*(const Int& b);
     // Int operator/(const Int& b);
@@ -40,6 +40,7 @@ class Int{
     static const long long _BASE = static_cast<long long>(1e18);
 
     bool is_str_legal(const std::string &val);
+    Int basic_add(const Int &b);
 };
 #endif
 
