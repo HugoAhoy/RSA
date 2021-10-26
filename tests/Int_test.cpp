@@ -13,6 +13,8 @@ TEST(IntTest, BasicAssertions) {
   EXPECT_EQ(std::to_string(-21542365237ll), Int(-21542365237ll).val());
   EXPECT_EQ(std::to_string(288230376152127212ll), Int(288230376152127212ll).val());
   EXPECT_EQ(std::to_string(-562949945582896ll), Int(-562949945582896ll).val());
+  EXPECT_EQ("567000000000000000012", Int(std::vector<long long>({12, 567})).val());
+  EXPECT_EQ("-468768000000000012468786", Int(std::vector<long long>({12468786, 468768}), false).val());
 }
 
 TEST(IntTest, Compares) {
@@ -81,4 +83,8 @@ TEST(IntTest, Compares) {
   EXPECT_FALSE(Int(13521564) == Int("13521565"));
   EXPECT_FALSE(Int(5648915874767ll) == Int(-5648915874767ll));
   EXPECT_FALSE(Int("9687864") == Int("96878642"));
+}
+
+TEST(IntTest, Add){
+  // EXPECT_EQ(Int(), Int()+Int());
 }

@@ -2,6 +2,7 @@
 #include "string"
 #include "vector"
 #include "cmath"
+#include "iostream"
 
 Int::Int(const std::string &val){
     if(!this->is_str_legal(val)){
@@ -81,6 +82,18 @@ Int::Int(const long long &val){
     }
 }
 
+Int::Int(const std::vector<long long> &val, bool positive){
+    this->_units = val.size();
+    this->_val = val;
+    this->_is_positive = positive;
+    while(this->_val.back() == 0){
+        this->_units--;
+        this->_val.pop_back();
+    }
+    this->_length = this->_unit_length*(this->_units-1) + static_cast<long long>(log10(this->_val.back()))+1;
+}
+
+
 bool Int::is_str_legal(const std::string &val){
     if(val.length() == 0){
         return false;
@@ -89,16 +102,20 @@ bool Int::is_str_legal(const std::string &val){
 }
 
 std::string Int::val(){
-    std::string val_str;
-    if(!this->_is_positive){
-        val_str = "-";
-    }
-    else{
-        val_str="";
+    std::string sub;
+    long long val_length = this->length() + !this->is_positive();
+    std::string val_str(val_length,'0');
+    if(!this->is_positive()){
+        val_str[0] = '-';
     }
 
-    for(int i = this->_units-1; i >= 0 ; i--){
-        val_str = val_str+std::to_string(this->_val[i]);
+    int idx;
+    for(int i = 0; i < this->_units; i++){
+        sub = std::to_string(this->_val[i]);
+        idx = val_length - i*this->_unit_length - 1;
+        for(int j = sub.length()-1; j >= 0; j--, idx--){
+            val_str[idx] = sub[j];
+        }
     }
     return val_str;
 }
