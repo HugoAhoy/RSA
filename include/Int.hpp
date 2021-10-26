@@ -14,6 +14,15 @@ class Int{
     Int(const long long &val);
     
     std::string val();
+
+    long long length() const;
+    bool is_positive() const;
+
+    bool operator >(const Int &b);
+    bool operator <(const Int &b);
+    bool operator <=(const Int &b);
+    bool operator >=(const Int &b);
+    bool operator ==(const Int &b);
     // Int operator+(const Int& b);
     // Int operator-(const Int& b);
     // Int operator*(const Int& b);
@@ -25,6 +34,7 @@ class Int{
     std::vector<long long> _val;
     static const long long _unit_length = 18;
     long long _units;
+    long long _length;
     static const long long _BASE = static_cast<long long>(1e18);
 
     bool is_str_legal(const std::string &val);
