@@ -27,20 +27,22 @@ class Int{
     bool operator ==(const Int &b) const;
     Int operator+(const Int &b);
     // Int operator-(const Int& b);
-    // Int operator*(const Int& b);
+    Int operator-();
+    Int operator*(const Int& b);
     // Int operator/(const Int& b);
     // Int mod(const Int& b);
 
     private:
     bool _is_positive;
     std::vector<long long> _val;
-    static const long long _unit_length = 18;
+    static const long long _unit_length = 9;
     long long _units;
     long long _length;
-    static const long long _BASE = static_cast<long long>(1e18);
+    static const long long _BASE = static_cast<long long>(1e9);
 
     bool is_str_legal(const std::string &val);
     Int basic_add(const Int &b);
+    Int basic_mul(const Int &b);
 };
 #endif
 
