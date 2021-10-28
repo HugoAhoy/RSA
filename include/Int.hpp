@@ -19,6 +19,7 @@ class Int{
 
     long long length() const;
     bool is_positive() const;
+    bool is_odd() const;
 
     bool operator >(const Int &b) const;
     bool operator <(const Int &b) const;

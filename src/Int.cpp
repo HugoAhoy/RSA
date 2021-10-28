@@ -134,6 +134,10 @@ bool Int::is_positive() const{
     return this->_is_positive;
 }
 
+bool Int::is_odd() const{
+    return this->_val[0]&1;
+}
+
 bool Int::operator<(const Int &b) const{
     // 正负不同
     if(this->is_positive() != b.is_positive()){
