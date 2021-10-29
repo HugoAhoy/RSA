@@ -5,6 +5,13 @@
 #include "algorithm"
 #include "iostream"
 
+Int::Int(){
+    this->_is_positive = true;
+    this->_val = std::vector<long long>(1,0);
+    this->_units = 1;
+    this->_length = 1;
+}
+
 Int::Int(const std::string &val){
     if(!this->is_str_legal(val)){
         ; // raise error
@@ -92,9 +99,12 @@ Int::Int(const std::vector<long long> &val, bool positive){
     this->_units = val.size();
     this->_val = val;
     this->_is_positive = positive;
-    while(this->_val.back() == 0){
+    while(this->_val.back() == 0 && this->_val.size() > 1){
         this->_units--;
         this->_val.pop_back();
+    }
+    if(this->_val.size() == 1 && this->_val.back() == 0){
+        this->_is_positive = true;
     }
     this->_length = this->_unit_length*(this->_units-1) + static_cast<long long>(log10(this->_val.back()))+1;
 }
