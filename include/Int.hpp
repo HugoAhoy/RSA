@@ -14,6 +14,8 @@ class Int{
     Int(const long long &val);
 
     Int(const std::vector<long long> &val, bool positive=true);
+
+    Int(const Int &b);
     
     std::string val();
 
@@ -27,11 +29,11 @@ class Int{
     bool operator >=(const Int &b) const;
     bool operator ==(const Int &b) const;
     Int operator+(const Int &b);
-    // Int operator-(const Int& b);
-    Int operator-();
+    Int operator-(const Int& b);
+    Int operator-() const;
     Int operator*(const Int& b);
     // Int operator/(const Int& b);
-    // Int mod(const Int& b);
+    // Int operator%(const Int& b);
 
     private:
     bool _is_positive;
@@ -42,8 +44,12 @@ class Int{
     static const long long _BASE = static_cast<long long>(1e9);
 
     bool is_str_legal(const std::string &val);
-    Int basic_add(const Int &b);
-    Int basic_mul(const Int &b);
+    Int basic_add(const Int &b) const;
+    Int basic_mul(const Int &b, bool positive = true) const;
+    Int basic_sub(const Int &b) const;
+    bool abs_gt(const Int &b) const;
+    bool abs_lt(const Int &b) const;
+    int _div10();
 };
 #endif
 
