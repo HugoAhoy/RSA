@@ -7,6 +7,8 @@
 
 class Int{
     public:
+    Int();
+    
     Int(const std::string &val);
 
     Int(const int &val);
