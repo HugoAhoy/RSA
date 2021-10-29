@@ -11,7 +11,16 @@ FetchContent_Declare(
 )
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
+
+FetchContent_Declare(
+  googlebenchmark
+  URL https://github.com/google/benchmark/archive/refs/tags/v1.6.0.zip
+)
+
+FetchContent_MakeAvailable(
+  googletest
+  googlebenchmark
+)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 message(status "Project Directory: ${PROJECT_SOURCE_DIR}")
@@ -35,6 +44,14 @@ add_executable(
   src/Int.cpp
   src/util.cpp
 )
+
+add_executable(
+  Int_bench
+  benchmarks/Int_bench.cpp
+  src/Int.cpp
+  src/util.cpp
+)
+
 target_link_libraries(
   Int_test
   gtest_main
@@ -43,6 +60,11 @@ target_link_libraries(
   util_test
   gmock_main
 )
+target_link_libraries(
+  Int_bench
+  benchmark_main
+)
+
 
 include(GoogleTest)
 gtest_discover_tests(Int_test)
