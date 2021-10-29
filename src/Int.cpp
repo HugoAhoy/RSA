@@ -99,6 +99,10 @@ Int::Int(const std::vector<long long> &val, bool positive){
     this->_length = this->_unit_length*(this->_units-1) + static_cast<long long>(log10(this->_val.back()))+1;
 }
 
+Int::Int(const Int &b){
+    Int(b._val, b._is_positive);
+}
+
 
 bool Int::is_str_legal(const std::string &val){
     if(val.length() == 0){
@@ -138,6 +142,24 @@ bool Int::is_odd() const{
     return this->_val[0]&1;
 }
 
+bool Int::abs_gt(const Int &b) const{
+    for(int i = this->_units-1; i >= 0; i--){
+        if(this->_val[i] != b._val[i]){
+            return this->_val[i] > b._val[i];
+        }
+    }
+    return false;
+}
+
+bool Int::abs_lt(const Int &b) const{
+    for(int i = this->_units-1; i >= 0; i--){
+        if(this->_val[i] != b._val[i]){
+            return this->_val[i] < b._val[i];
+        }
+    }
+    return false;
+}
+
 bool Int::operator<(const Int &b) const{
     // 正负不同
     if(this->is_positive() != b.is_positive()){
@@ -154,20 +176,11 @@ bool Int::operator<(const Int &b) const{
 
     // 正负长度都相同
     if(this->is_positive()){
-        for(int i = this->_units-1; i >= 0; i--){
-            if(this->_val[i] != b._val[i]){
-                return this->_val[i] < b._val[i];
-            }
-        }
+        return this->abs_lt(b);
     }
     else{
-        for(int i = this->_units-1; i >= 0; i--){
-            if(this->_val[i] != b._val[i]){
-                return this->_val[i] > b._val[i];
-            }
-        }
+        return this->abs_gt(b);
     }
-    return false;
 }
 
 bool Int::operator>(const Int &b) const{
@@ -186,20 +199,11 @@ bool Int::operator>(const Int &b) const{
 
     // 正负长度都相同
     if(this->is_positive()){
-        for(int i = this->_units-1; i >= 0; i--){
-            if(this->_val[i] != b._val[i]){
-                return this->_val[i] > b._val[i];
-            }
-        }
+        return this->abs_gt(b);
     }
     else{
-        for(int i = this->_units-1; i >= 0; i--){
-            if(this->_val[i] != b._val[i]){
-                return this->_val[i] < b._val[i];
-            }
-        }
+        return this->abs_lt(b);
     }
-    return false;
 }
 
 bool Int::operator<=(const Int &b) const{
@@ -228,15 +232,35 @@ bool Int::operator==(const Int &b) const{
 }
 
 Int Int::operator+(const Int &b){
-    if(this->is_positive() && b.is_positive()){
-        return this->basic_add(b);
+    if(this->is_positive() == b.is_positive()){
+        if(this->is_positive()){
+            return this->basic_add(b);
+        }
+        else{
+            return -(this->basic_add(b));
+        }
     }
     else{
-        throw -1;
+        if(this->is_positive()){
+            if(this->abs_gt(b)){
+                return this->basic_sub(b);
+            }
+            else{
+                return -(b.basic_sub(*this));
+            }
+        }
+        else{
+            if(this->abs_gt(b)){
+                return -(this->basic_sub(b));
+            }
+            else{
+                return b.basic_sub(*this);
+            }
+        }
     }
 }
 
-Int Int::basic_add(const Int &b){
+Int Int::basic_add(const Int &b) const{
     long long res_units = std::max(this->_units, b._units) + 1;
     std::vector<long long> res(res_units);
     long long c = 0;
@@ -268,22 +292,20 @@ Int Int::basic_add(const Int &b){
     return Int(res);
 }
 
-Int Int::operator-(){
-    this->_is_positive = !this->_is_positive;
-    return *this;
+Int Int::operator-() const{
+    return Int(this->_val, !this->is_positive());
 }
 
 Int Int::operator*(const Int &b){
-    Int res = this->basic_mul(b);
     if(this->is_positive() == b.is_positive()){
-        return res;
+        return this->basic_mul(b, true);
     }
     else{
-        return -res;
+        return this->basic_mul(b, false);
     }
 }
 
-Int Int::basic_mul(const Int &b){
+Int Int::basic_mul(const Int &b, bool positive) const{
     long long res_units = this->_units+b._units+1;
     std::vector<long long> res(res_units, 0);
     for(int i = 0; i < this->_units; i++){
@@ -299,5 +321,66 @@ Int Int::basic_mul(const Int &b){
         res[this->_units+b._units+1] += res[this->_units+b._units] /this->_BASE;
         res[this->_units+b._units] = res[this->_units+b._units] % this->_BASE;
     }
+    return Int(res, positive);
+}
+
+int Int::_div10(){
+    if(this->_val[0]%10 !=0){
+        return -1; // 说明没有10的因子
+    }
+    long long t = this->_BASE;
+    long long c = 0;
+    for(int i = this->_units; i >= 0; i--){
+        this->_val[i] += c*t;
+        c = this->_val[i] % 10;
+        this->_val[i] = this->_val[i]/10;
+    }
+    return 0;
+}
+
+Int Int::basic_sub(const Int &b) const{
+    std::vector<long long> res(this->_units, 0);
+    for(int i = 0; i < b._units; i++){
+        res[i] = this->_val[i] - b._val[i];
+    }
+    for(int i = 0; i < b._units; i++){
+        if(res[i] < 0){
+            res[i+1]--;
+            res[i] += this->_BASE;
+        }
+    }
+    for(int i = b._units; i < this->_units; i++){
+        res[i] += this->_val[i];
+    }
     return Int(res);
 }
+
+Int Int::operator-(const Int &b){
+    if(this->is_positive() == b.is_positive()){
+        if(this->is_positive() == true){
+            if(this->operator>(b)){
+                return this->basic_sub(b);
+            }
+            else {
+                return -(b.basic_sub(*this));
+            }
+        }
+        else{
+            if(this->operator>(b)){
+                return b.basic_sub(*this);
+            }
+            else {
+                return -(this->basic_sub(b));
+            }
+        }
+    }
+    else{
+        if(this->is_positive()){
+            return this->basic_add(b);
+        }
+        else{
+            return -(this->basic_add(b));
+        }
+    }
+}
+
