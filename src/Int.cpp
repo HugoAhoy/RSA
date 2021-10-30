@@ -110,7 +110,10 @@ Int::Int(const std::vector<long long> &val, bool positive){
 }
 
 Int::Int(const Int &b){
-    Int(b._val, b._is_positive);
+    this->_units = b._units;
+    this->_val = b._val;
+    this->_is_positive = b.is_positive();
+    this->_length = b.length();
 }
 
 
@@ -121,7 +124,7 @@ bool Int::is_str_legal(const std::string &val){
     return true;
 }
 
-std::string Int::val(){
+std::string Int::val() const{
     std::string sub;
     long long val_length = this->length() + !this->is_positive();
     std::string val_str(val_length,'0');
@@ -334,18 +337,49 @@ Int Int::basic_mul(const Int &b, bool positive) const{
     return Int(res, positive);
 }
 
-int Int::_div10(){
-    if(this->_val[0]%10 !=0){
-        return -1; // 说明没有10的因子
+Int Int::_div10(long long n){
+    if(n < 0){
+        return *this;
     }
-    long long t = this->_BASE;
-    long long c = 0;
-    for(int i = this->_units; i >= 0; i--){
-        this->_val[i] += c*t;
-        c = this->_val[i] % 10;
-        this->_val[i] = this->_val[i]/10;
+    if(n >= this->length()){
+        this->_is_positive = true;
+        this->_val = std::vector<long long>(1,0);
+        this->_units = 1;
+        this->_length = 1;
     }
-    return 0;
+    else{
+        long long t = n/this->_unit_length;
+        long long base = static_cast<long long>(pow(10, n%this->_unit_length));
+        for(int i = n/this->_unit_length; i < this->_units - 1; i++){
+            this->_val[i] = this->_val[i]/base;
+            this->_val[i] += this->_val[i+1]%base*(this->_BASE/base);
+        }
+        this->_val[this->_units-1] /= base;
+        if(this->_val.back() == 0){
+            this->_val.pop_back();
+        }
+        this->_val = std::vector<long long>(this->_val.begin()+n/this->_unit_length, this->_val.end());
+        this->_units = this->_val.size();
+        this->_length = this->_length - n;
+    }
+    return *this;
+}
+
+Int Int::rightshift(){
+    for(int i = 0; i< this->_units-1; i++){
+        this->_val[i] >>=1;
+        if(this->_val[i+1] &1){
+            this->_val[i] += (this->_BASE>>1);
+        }
+    }
+    this->_val[this->_units-1] >>= 1;
+    if(this->_val.back() == 0 && this->_val.size() > 1){
+        this->_val.pop_back();
+        this->_units--;
+    }
+    this->_units = this->_val.size();
+    this->_length = this->_unit_length*(this->_units-1) + static_cast<long long>(log10(this->_val.back()))+1;
+    return *this;
 }
 
 Int Int::basic_sub(const Int &b) const{
@@ -394,3 +428,77 @@ Int Int::operator-(const Int &b){
     }
 }
 
+Int Int::operator/(const Int &b){
+    if(this->operator<(b)){
+        return *this;
+    }
+    auto ret = this->get_reciprocal_by_newton(b, this->length());
+    Int res = this->operator*(ret.second);
+    res._div10(ret.first);
+    Int remainder = this->operator-(res*b);
+    if(remainder > b){
+        res = res + div_by_binary_search(remainder, b);
+    }
+    return res;
+}
+
+std::pair<long long, Int> Int::get_reciprocal_by_newton(const Int &b, long long target_precision){
+    long long len = b.length();
+    
+    Int dec_part, temp_dec_part, base("1"+std::string(len,'0'));
+    
+    // 找到一个最优起始点, 可以改成二分
+    int i = 2;
+    for(; i < 10; i++){
+        if(Int(i)*b > base){
+            dec_part = Int(i-1);
+            break;
+        }
+    }
+    if(i == 10){
+        dec_part = Int(9);
+    }
+
+    // 迭代 x_{k+1} = x_{k}*(2-b*x_{k})
+    for(long long i = 1; i <= target_precision*4; i<<=1){
+        // 由于x_{k} <= b^{-1}, 所以2-b*x_{k} = 1.xxxx >= 1
+        // 这意味着我们计算2 - b*x_{k}只需要算dec_part就行, int_part永远为1
+        // 2-b*x_{k}
+        base = Int("1"+std::string(len,'0'));
+        temp_dec_part = base - (dec_part*b);
+        
+        // x_{k+1} = x_{k}*(2-b*x_{k})
+        // 因为(2-b*x_{k})int_part为1, 所以x_{k}*(2-b*x_{k}) = x_{k} + dec_part*x_{k}
+        dec_part = dec_part*(base + temp_dec_part);
+        // long long len_to_truncate = dec_part.length()-i*2;
+        // dec_part._div10(len_to_truncate);
+        // len = 2*len-len_to_truncate;
+        len = 2*len;
+    }
+
+    return std::make_pair(len, dec_part);
+}
+
+Int Int::div_by_binary_search(const Int &a, const Int &b){
+    if(a < b){
+        return a;
+    }
+    long long len_diff = a.length() - b.length();
+    Int lower("1"+ std::string(len_diff, '0'));
+    if(lower*b > a){
+        lower._div10(1);
+    }
+    Int upper = Int(10)*lower;
+    Int mid;
+    while(lower < upper){
+        mid = (lower+upper+Int(1)).rightshift();
+        Int temp_res = mid*b;
+        if(temp_res > a){
+            upper = mid-Int(1);
+        }
+        else{
+            lower = mid;
+        }
+    }
+    return lower;
+}
