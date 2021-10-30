@@ -430,7 +430,7 @@ Int Int::operator-(const Int &b){
 
 Int Int::operator/(const Int &b){
     if(this->operator<(b)){
-        return *this;
+        return Int(0);
     }
     return this->div_by_binary_search(*this, b);
 }
@@ -494,4 +494,12 @@ Int Int::div_by_binary_search(const Int &a, const Int &b){
         }
     }
     return lower;
+}
+
+Int Int::operator%(const Int& b){
+    if(this->operator<(b)){
+        return *this;
+    }
+    Int res = this->div_by_binary_search(*this, b);
+    return this->operator-(res*b);
 }
