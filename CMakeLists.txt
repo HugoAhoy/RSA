@@ -52,6 +52,13 @@ add_executable(
   src/util.cpp
 )
 
+add_executable(
+  util_bench
+  benchmarks/util_bench.cpp
+  src/util.cpp
+  src/Int.cpp
+)
+
 target_link_libraries(
   Int_test
   gtest_main
@@ -65,6 +72,10 @@ target_link_libraries(
   benchmark_main
 )
 
+target_link_libraries(
+  util_bench
+  benchmark_main
+)
 
 include(GoogleTest)
 gtest_discover_tests(Int_test)
