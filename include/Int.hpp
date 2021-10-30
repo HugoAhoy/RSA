@@ -19,7 +19,7 @@ class Int{
 
     Int(const Int &b);
     
-    std::string val();
+    std::string val() const;
 
     long long length() const;
     bool is_positive() const;
@@ -34,8 +34,10 @@ class Int{
     Int operator-(const Int& b);
     Int operator-() const;
     Int operator*(const Int& b);
-    // Int operator/(const Int& b);
+    Int operator/(const Int& b);
     // Int operator%(const Int& b);
+    static Int div_by_binary_search(const Int &a, const Int &b);
+    Int rightshift();
 
     private:
     bool _is_positive;
@@ -51,7 +53,9 @@ class Int{
     Int basic_sub(const Int &b) const;
     bool abs_gt(const Int &b) const;
     bool abs_lt(const Int &b) const;
-    int _div10();
+    Int _div10(long long n);
+    std::pair<long long, Int> get_reciprocal_by_newton(const Int &b, long long target_precision);
+
 };
 #endif
 
