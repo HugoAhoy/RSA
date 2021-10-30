@@ -52,3 +52,15 @@ static void Int_mod(benchmark::State& state) {
     }
 }
 BENCHMARK(Int_mod);
+
+static void Int_power(benchmark::State& state) {
+    Int a, b, res;
+    for (auto _ : state){
+        state.PauseTiming();
+        a = Random_Nbits_Int(1000);
+        b = Random_Nbits_Int(500);
+        state.ResumeTiming();
+        a.power(b-1, b);
+    }
+}
+BENCHMARK(Int_power);
