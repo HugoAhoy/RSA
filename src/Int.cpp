@@ -378,7 +378,13 @@ Int Int::rightshift(){
         this->_units--;
     }
     this->_units = this->_val.size();
-    this->_length = this->_unit_length*(this->_units-1) + static_cast<long long>(log10(this->_val.back()))+1;
+    if(this->_units == 1 && this->_val.back() == 0){
+        this->_is_positive = true;
+        this->_length = 1;
+    }
+    else{
+        this->_length = this->_unit_length*(this->_units-1) + static_cast<long long>(log10(this->_val.back()))+1;
+    }
     return *this;
 }
 
@@ -502,4 +508,23 @@ Int Int::operator%(const Int& b){
     }
     Int res = this->div_by_binary_search(*this, b);
     return this->operator-(res*b);
+}
+
+Int Int::power(Int b, const Int &mod){
+    Int res = 1;
+    Int p = *this;
+    while(!(b == 0)){
+        if(b.is_odd()){
+            res = res * p;
+            if(res > mod){
+                res = res%mod;
+            }
+        }
+        p = p*p;
+        if(p > mod){
+            p = p % mod;
+        }
+        b.rightshift();
+    }
+    return res;
 }

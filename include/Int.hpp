@@ -36,6 +36,7 @@ class Int{
     Int operator*(const Int& b);
     Int operator/(const Int& b);
     Int operator%(const Int& b);
+    Int power(Int b, const Int &mod);
     static Int div_by_binary_search(const Int &a, const Int &b);
     Int rightshift();
 
