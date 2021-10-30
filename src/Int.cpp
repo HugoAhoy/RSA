@@ -432,14 +432,7 @@ Int Int::operator/(const Int &b){
     if(this->operator<(b)){
         return *this;
     }
-    auto ret = this->get_reciprocal_by_newton(b, this->length());
-    Int res = this->operator*(ret.second);
-    res._div10(ret.first);
-    Int remainder = this->operator-(res*b);
-    if(remainder > b){
-        res = res + div_by_binary_search(remainder, b);
-    }
-    return res;
+    return this->div_by_binary_search(*this, b);
 }
 
 std::pair<long long, Int> Int::get_reciprocal_by_newton(const Int &b, long long target_precision){
