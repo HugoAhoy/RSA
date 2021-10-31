@@ -30,15 +30,16 @@ class Int{
     bool operator <=(const Int &b) const;
     bool operator >=(const Int &b) const;
     bool operator ==(const Int &b) const;
-    Int operator+(const Int &b);
-    Int operator-(const Int& b);
+    Int operator+(const Int &b) const;
+    Int operator-(const Int& b) const;
     Int operator-() const;
-    Int operator*(const Int& b);
-    Int operator/(const Int& b);
-    Int operator%(const Int& b);
+    Int operator*(const Int& b) const;
+    Int operator/(const Int& b) const;
+    Int operator%(const Int& b) const;
     Int power(Int b, const Int &mod);
     static Int div_by_binary_search(const Int &a, const Int &b);
     Int rightshift();
+    long long mod3() const;
 
     private:
     bool _is_positive;
