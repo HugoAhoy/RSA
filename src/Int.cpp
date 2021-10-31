@@ -244,7 +244,7 @@ bool Int::operator==(const Int &b) const{
     return true;
 }
 
-Int Int::operator+(const Int &b){
+Int Int::operator+(const Int &b) const{
     if(this->is_positive() == b.is_positive()){
         if(this->is_positive()){
             return this->basic_add(b);
@@ -309,7 +309,7 @@ Int Int::operator-() const{
     return Int(this->_val, !this->is_positive());
 }
 
-Int Int::operator*(const Int &b){
+Int Int::operator*(const Int &b) const{
     if(this->is_positive() == b.is_positive()){
         return this->basic_mul(b, true);
     }
@@ -405,7 +405,7 @@ Int Int::basic_sub(const Int &b) const{
     return Int(res);
 }
 
-Int Int::operator-(const Int &b){
+Int Int::operator-(const Int &b) const{
     if(this->is_positive() == b.is_positive()){
         if(this->is_positive() == true){
             if(this->operator>(b)){
@@ -434,7 +434,7 @@ Int Int::operator-(const Int &b){
     }
 }
 
-Int Int::operator/(const Int &b){
+Int Int::operator/(const Int &b) const{
     if(this->operator<(b)){
         return Int(0);
     }
@@ -502,7 +502,7 @@ Int Int::div_by_binary_search(const Int &a, const Int &b){
     return lower;
 }
 
-Int Int::operator%(const Int& b){
+Int Int::operator%(const Int& b) const{
     if(this->operator<(b)){
         return *this;
     }
@@ -527,4 +527,12 @@ Int Int::power(Int b, const Int &mod){
         b.rightshift();
     }
     return res;
+}
+
+long long Int::mod3() const{
+    long long ans = 0;
+    for(long long i = 0; i < this->_units; i++){
+        ans = (ans+this->_val[i])%3;
+    }
+    return ans;
 }
