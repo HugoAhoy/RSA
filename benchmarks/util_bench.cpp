@@ -12,7 +12,7 @@ BENCHMARK(util_Random_nbits);
 // 随机生成n位大素数数
 static void util_Random_nbits_prime(benchmark::State& state) {
     for (auto _ : state){
-        Random_Nbits_Prime(512);
+        Random_Nbits_Prime(384);
     }
 }
 BENCHMARK(util_Random_nbits_prime);
