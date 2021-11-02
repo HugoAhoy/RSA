@@ -7,10 +7,12 @@
 // 100% 判定long long 的一组基。
 std::vector<long long> test_num({2,325,9375,28178,450775,9780504,1795265022});
 
+static std::vector<Int> big_test_num({Random_Nbits_Int(20),Random_Nbits_Int(40),Random_Nbits_Int(60),Random_Nbits_Int(80),Random_Nbits_Int(100),Random_Nbits_Int(120)});
+
 Int Random_Nbits_Int(long long nbits) {
-    std::random_device rd;
-    std::mt19937 mt(rd());
-    std::uniform_int_distribution<long long> dist(0, (1ll<<32) - 1);
+    static std::random_device rd;
+    static std::mt19937 mt(rd());
+    static std::uniform_int_distribution<long long> dist(0, (1ll<<32) - 1);
     Int base = Int(1ll<<32);
     long long parts = nbits/32;
     long long last = nbits%32;
@@ -28,18 +30,55 @@ Int Random_Nbits_Int(long long nbits) {
 }
 
 Int Random_Nbits_Prime(long long nbits){
-    Int odd = Random_Nbits_Int(nbits);
+    Int odd_1 = Random_Nbits_Int(nbits);
+    Int odd_2;
+    Int res;
     while(true){
-        if(!odd.is_odd()){
-            odd = odd + 1;
+        odd_1 = Random_Nbits_Int(nbits);
+        
+        if(!odd_1.is_odd()){
+            odd_1 = odd_1 + 1;
         }
-        if(!odd.mod3()){
-            odd = odd+2;// TODO: 可能导致odd的#bit = nbits+1
+        
+        // 构造6k+1和6k-1
+        long long odd_mod3 = odd_1.mod3();
+        if(!odd_mod3){
+            odd_1 = odd_1+2;// TODO: 可能导致odd的#bit = nbits+1
+            odd_2 = odd_1+2;
         }
-        if(Miller_Rabin(odd)){
-            return odd;
+        else if(odd_mod3 == 1){
+            odd_2 = odd_1 - 2;
         }
-        odd = Random_Nbits_Int(nbits);
+        else{
+            odd_2 = odd_1 + 2;
+        }
+
+        if(Miller_Rabin(odd_1)){
+            return odd_1;
+        }
+        if(Miller_Rabin(odd_2)){
+            return odd_2;
+        }
+
+        for(long long i = 1; i < nbits/6; i++){
+            res = odd_1 + i*6;
+            if(Miller_Rabin(res)){
+                return res;
+            }
+            res = odd_1 - i*6;
+            if(Miller_Rabin(res)){
+                return res;
+            }
+            res = odd_2 + i*6;
+            if(Miller_Rabin(res)){
+                return res;
+            }
+            res = odd_2 - i*6;
+            if(Miller_Rabin(res)){
+                return res;
+            }
+        }
+        return res;
     }
 }
 
@@ -55,7 +94,7 @@ bool Miller_Rabin(const Int &b){
         t++;
     }
 
-    // bast test
+    // base test
     for(int i = 0; i < 7; i++){
         Int res = Int(test_num[i]).power(m, b);
         if(res == pos_one || res == neg_one){
@@ -79,8 +118,8 @@ bool Miller_Rabin(const Int &b){
 
     // extra test
     long long base_num = b.length()/50;
-    for(long long i = 1; i < base_num; i++){
-        Int res = Random_Nbits_Int(i*20).power(m, b);
+    for(long long i = 0; i < base_num; i++){
+        Int res = big_test_num[i].power(m, b);
         if(res == pos_one || res == neg_one){
             continue;
         }
