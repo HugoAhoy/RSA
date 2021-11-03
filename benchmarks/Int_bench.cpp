@@ -64,3 +64,16 @@ static void Int_power(benchmark::State& state) {
     }
 }
 BENCHMARK(Int_power);
+
+// Karatsuba 大数乘法
+static void Int_Karatsuba_mul(benchmark::State& state) {
+    Int a, b, res;
+    for (auto _ : state){
+        state.PauseTiming();
+        a = Random_Nbits_Int(1024);
+        b = Random_Nbits_Int(1024);
+        state.ResumeTiming();
+        a.Karatsuba_mul(b);
+    }
+}
+BENCHMARK(Int_Karatsuba_mul);
