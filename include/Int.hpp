@@ -40,6 +40,7 @@ class Int{
     static Int div_by_binary_search(const Int &a, const Int &b);
     Int rightshift();
     long long mod3() const;
+    Int Karatsuba_mul(const Int& b);
 
     private:
     bool _is_positive;

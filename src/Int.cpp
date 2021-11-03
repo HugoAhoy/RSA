@@ -4,6 +4,7 @@
 #include "cmath"
 #include "algorithm"
 #include "iostream"
+#include "Karatsuba.hpp"
 
 Int::Int(){
     this->_is_positive = true;
@@ -535,4 +536,8 @@ long long Int::mod3() const{
         ans = (ans+this->_val[i])%3;
     }
     return ans;
+}
+
+Int Int::Karatsuba_mul(const Int& b){
+    return Int(Karatsuba(this->_val, b._val,this->_BASE));
 }
