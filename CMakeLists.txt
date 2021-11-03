@@ -30,6 +30,7 @@ add_executable(
   main_test.cpp
   src/Int.cpp
   src/util.cpp
+  src/Karatsuba.cpp
 )
 enable_testing()
 
@@ -37,12 +38,14 @@ add_executable(
   Int_test
   tests/Int_test.cpp
   src/Int.cpp
+  src/Karatsuba.cpp
 )
 add_executable(
   util_test
   tests/util_test.cpp
   src/Int.cpp
   src/util.cpp
+  src/Karatsuba.cpp
 )
 
 add_executable(
@@ -50,6 +53,7 @@ add_executable(
   benchmarks/Int_bench.cpp
   src/Int.cpp
   src/util.cpp
+  src/Karatsuba.cpp
 )
 
 add_executable(
@@ -57,6 +61,7 @@ add_executable(
   benchmarks/util_bench.cpp
   src/util.cpp
   src/Int.cpp
+  src/Karatsuba.cpp
 )
 
 target_link_libraries(
