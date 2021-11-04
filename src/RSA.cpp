@@ -21,8 +21,7 @@ Keys GenerateKey(long long key_length){
     Int e = 65537;
     // 生成私钥
     Int x, d;
-    std::cout << EX_GCD(phi_n, e, x, d).val() << std::endl;
-    std::cout << d.val() << std::endl;
+    EX_GCD(phi_n, e, x, d);
     while(d < 0){
         d = d+phi_n;
     }
