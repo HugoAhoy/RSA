@@ -104,10 +104,13 @@ Int::Int(const std::vector<long long> &val, bool positive){
         this->_units--;
         this->_val.pop_back();
     }
-    if(this->_val.size() == 1 && this->_val.back() == 0){
+    if(this->_val.size() == 1 && this->_val.back() == 0){ // 说明是0, 特判
         this->_is_positive = true;
+        this->_length = 1;
     }
-    this->_length = this->_unit_length*(this->_units-1) + static_cast<long long>(log10(this->_val.back()))+1;
+    else{
+        this->_length = this->_unit_length*(this->_units-1) + static_cast<long long>(log10(this->_val.back()))+1;
+    }
 }
 
 Int::Int(const Int &b){
