@@ -9,4 +9,6 @@ Int Random_Nbits_Prime(long long nbits);
 
 bool Miller_Rabin(const Int &b);
 
+Int EX_GCD(const Int &a, const Int &b, Int &x, Int &y);
+
 #endif

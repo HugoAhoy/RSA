@@ -140,3 +140,18 @@ bool Miller_Rabin(const Int &b){
     }
     return true;
 }
+
+Int EX_GCD(const Int &a, const Int &b, Int &x, Int &y){
+    if(b == 0){
+        x = 1;
+        y = 0;
+        return a;
+    }
+    std::cout << a.val() << " " << b.val() << std::endl;
+    Int q = a/b;
+    Int res = EX_GCD(b, a - q*b,  x, y);
+    Int temp = y;
+    y = x - q*y;
+    x = temp;
+    return res;
+}
