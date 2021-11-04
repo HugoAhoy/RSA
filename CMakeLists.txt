@@ -31,6 +31,7 @@ add_executable(
   src/Int.cpp
   src/util.cpp
   src/Karatsuba.cpp
+  src/RSA.cpp
 )
 enable_testing()
 
@@ -64,6 +65,15 @@ add_executable(
   src/Karatsuba.cpp
 )
 
+add_executable(
+  RSA_bench
+  benchmarks/RSA_bench.cpp
+  src/util.cpp
+  src/Int.cpp
+  src/Karatsuba.cpp
+  src/RSA.cpp
+)
+
 target_link_libraries(
   Int_test
   gtest_main
@@ -79,6 +89,11 @@ target_link_libraries(
 
 target_link_libraries(
   util_bench
+  benchmark_main
+)
+
+target_link_libraries(
+  RSA_bench
   benchmark_main
 )
 
