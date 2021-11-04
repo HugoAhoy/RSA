@@ -13,8 +13,8 @@ struct Keys{
 
 Keys GenerateKey(long long key_length);
 
-Int Encrypty(Int PublicKey, Int Content);
+Int Encrypt(const Int &PublicKey_e, const Int &PublicKey_n, Int Content);
 
-Int Decrypty(Int PrivateKey);
+Int Decrypt(const Int &PrivateKey, const Int &PublicKey_n, Int Content);
 
 #endif
