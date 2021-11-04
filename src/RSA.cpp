@@ -2,7 +2,6 @@
 #include "string"
 #include "RSA.hpp"
 #include "util.hpp"
-#include "iostream"
 
 Keys::Keys(const Int &_n, const Int &_e, const Int &_d){
     this->n = _n;
@@ -14,8 +13,6 @@ Keys GenerateKey(long long key_length){
     Int p = Random_Nbits_Prime(key_length>>1);
     Int q = Random_Nbits_Prime(key_length - (key_length>>1));
     Int n = p*q;
-    std::cout << p.val() << std::endl;
-    std::cout << q.val() << std::endl;
     Int phi_n = n - p -q +1;// (p-1)(q-1) = pq-p-q+1
     // 生成公钥(常见的将e固定为最大的费马数65537)
     Int e = 65537;
