@@ -33,6 +33,15 @@ add_executable(
   src/Karatsuba.cpp
   src/RSA.cpp
 )
+
+add_executable(
+  RSA
+  src/main_rsa.cpp
+  src/Int.cpp
+  src/util.cpp
+  src/Karatsuba.cpp
+  src/RSA.cpp
+)
 enable_testing()
 
 add_executable(
