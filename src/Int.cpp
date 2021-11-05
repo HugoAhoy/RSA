@@ -544,3 +544,33 @@ long long Int::mod3() const{
 Int Int::Karatsuba_mul(const Int& b){
     return Int(Karatsuba(this->_val, b._val,this->_BASE));
 }
+// Knuth 估商法
+std::pair<Int, Int> Int::knuth_divmod(const Int &a1, const Int &b1, long long base) {
+    // 先规范化
+    long long norm = base / (b1._val.back() + 1);
+    Int a = a1.basic_mul(norm); // TODO: basic_mul 加一个long long 参数的重载
+    Int b = b1.basic_mul(norm);
+    Int r;
+    std::vector<long long> q_vec(a._val.size());
+
+    for (long long i = a._val.size() - 1; i >= 0; i--) {
+        r = r*base;
+        r._val[0] = a._val[i];
+        long long s1 = b._val.size() < r._val.size() ? r._val[b._val.size()] : 0;
+        long long s2 = b._val.size() - 1 < r._val.size() ? r._val[b._val.size() - 1] : 0;
+        long long d = (s1 * base + s2) / b._val.back();
+        r = r - b * d;
+        while (r < 0){
+            r = r+b;
+            d--;
+        }
+        q_vec[i] = d;
+    }
+
+    Int q(q_vec,a1._is_positive == b1._is_positive);
+    r._is_positive = a1._is_positive;
+    while(!r._val.empty() && r._val.back() == 0){
+        r._val.pop_back();
+    }
+    return {q, r / norm};// TODO: 加一个Int 除以 long long 的除法 O(N)
+}
