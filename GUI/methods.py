@@ -1,4 +1,5 @@
-def generate_key(proc, key_length, label):
+def generate_key(proc, combo, pub_n_label, pub_e_label, priv_label):
+    key_length = int(combo.get()[4:])
     proc.stdin.write(b"keygen\n")
     proc.stdin.write((str(key_length)+'\n').encode())
     proc.stdin.flush()
@@ -8,7 +9,9 @@ def generate_key(proc, key_length, label):
     print(public_n)
     print(public_e)
     print(private_d)
-    label.config(text=' '.join([public_n,public_e,private_d]))
+    pub_n_label.config(text=public_n)
+    pub_e_label.config(text=public_e)
+    priv_label.config(text=private_d)
 
 # str-->hex-->int-->encrypt-->int-->hex
 def encrypt(proc, public_e, public_n, contents, label):

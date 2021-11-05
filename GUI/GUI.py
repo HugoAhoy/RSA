@@ -2,6 +2,11 @@ from tkinter import *
 from tkinter.ttk import *
 from methods import *
 
+from subprocess import Popen
+from subprocess import PIPE
+
+p = Popen("GUI/RSA.exe", stdin=PIPE, stdout=PIPE)
+
 # 窗口生成
 window = Tk()
 window.title("RSA")
@@ -46,7 +51,7 @@ pub_e_label.grid(column=0, row=7)
 pub_e_content =Label(frame1)
 pub_e_content.grid(column=1, row=7)
 
-gen_btn = Button(frame1, text="生成",command=lambda: generate_key(level_combo, priv_content, pub_n_content, pub_e_content))
+gen_btn = Button(frame1, text="生成",command=lambda: generate_key(p,level_combo,pub_n_label,pub_e_label,priv_label))
 gen_btn.grid(column=3, row=0)
 
 # 加密标签页元素
