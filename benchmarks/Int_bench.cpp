@@ -77,3 +77,16 @@ static void Int_Karatsuba_mul(benchmark::State& state) {
     }
 }
 BENCHMARK(Int_Karatsuba_mul);
+
+// 大数除法
+static void Int_knuth_div(benchmark::State& state) {
+    Int a, b, res;
+    for (auto _ : state){
+        state.PauseTiming();
+        a = Random_Nbits_Int(2048);
+        b = Random_Nbits_Int(1024);
+        state.ResumeTiming();
+        Int::knuth_divmod(a, b, int(1e9));
+    }
+}
+BENCHMARK(Int_knuth_div);
