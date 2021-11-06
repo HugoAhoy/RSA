@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 3.18)
+set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O2")
 project(RSA C CXX)
-
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -Wno-error=maybe-uninitialized -Wno-error=unused-parameter")
+endif()
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O2 -Wno-error=maybe-uninitialized")
 # For GTest
 include(FetchContent)
 FetchContent_Declare(
@@ -24,6 +27,7 @@ FetchContent_MakeAvailable(
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 message(status "Project Directory: ${PROJECT_SOURCE_DIR}")
+message("Build Type: ${CMAKE_BUILD_TYPE}")
 add_compile_options(-std=c++11)
 add_executable(
   demo
