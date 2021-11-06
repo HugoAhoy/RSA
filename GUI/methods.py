@@ -1,3 +1,6 @@
+from tkinter.filedialog import askopenfilename, asksaveasfilename
+from pathlib import Path
+
 def generate_key(proc, combo, pub_n_label, pub_e_label, priv_label):
     key_length = int(combo.get()[4:])
     proc.stdin.write(b"keygen\n")
@@ -9,9 +12,9 @@ def generate_key(proc, combo, pub_n_label, pub_e_label, priv_label):
     print(public_n)
     print(public_e)
     print(private_d)
-    pub_n_label.config(text=public_n)
-    pub_e_label.config(text=public_e)
-    priv_label.config(text=private_d)
+    pub_n_label.config(text=Decimal2Hex(public_n))
+    pub_e_label.config(text=Decimal2Hex(public_e))
+    priv_label.config(text=Decimal2Hex(private_d))
 
 # str-->hex-->int-->encrypt-->int-->hex
 def encrypt(proc, public_e, public_n, contents, label):
@@ -63,3 +66,30 @@ def Decimal2Hex2Str(num_d):
 
 def Hex2Decimal(num_h):
     return int(num_h,16)
+
+def read_private_key(pub_n, priv_d):
+    filename = askopenfilename()
+    print(filename)
+    with Path(filename).open('r') as f:
+        pub_n.config(text=f.readline().strip())
+        priv_d.config(text=f.readline().strip())
+
+def read_public_key(pub_n, pub_e):
+    filename = askopenfilename()
+    print(filename)
+    with Path(filename).open('r') as f:
+        pub_n.config(text=f.readline().strip())
+        pub_e.config(text=f.readline().strip())
+
+def save_keys(pub_n, pub_e, priv_d):
+    filename = asksaveasfilename()
+    print(filename)
+    filename = Path(filename)
+    pub_filename = filename.with_name(filename.stem+".pub")
+    priv_filename = filename
+    with pub_filename.open('w') as f:
+        f.write(pub_n["text"]+"\n")
+        f.write(pub_e["text"]+"\n")
+    with priv_filename.open('w') as f:
+        f.write(pub_n["text"]+"\n")
+        f.write(priv_d["text"]+"\n")
