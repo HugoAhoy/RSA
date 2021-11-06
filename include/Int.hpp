@@ -42,6 +42,10 @@ class Int{
     long long mod3() const;
     Int Karatsuba_mul(const Int& b);
     static std::pair<Int, Int> knuth_divmod(const Int &a1, const Int &b1, long long base);
+    Int div_ll(long long b);
+    Int mod_ll(long long b)const;
+    long long mod5() const;
+    bool isZero()const;
 
     private:
     bool _is_positive;

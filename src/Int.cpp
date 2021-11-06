@@ -97,6 +97,10 @@ Int::Int(const long long &val){
 }
 
 Int::Int(const std::vector<long long> &val, bool positive){
+    // for(int i = val.size() - 1; i>=0; i--){
+    //     std::cout << val[i];
+    // }
+    // std::cout << std::endl;
     this->_units = val.size();
     this->_val = val;
     this->_is_positive = positive;
@@ -547,6 +551,8 @@ Int Int::Karatsuba_mul(const Int& b){
 // Knuth 估商法
 std::pair<Int, Int> Int::knuth_divmod(const Int &a1, const Int &b1, long long base) {
     // 先规范化
+    // std:: cout << "knuth_div" << std::endl;
+    // std::cout << a1.val()  << std::endl << b1.val() << std::endl << "________________" << std::endl;
     long long norm = base / (b1._val.back() + 1);
     Int a = a1.basic_mul(norm); // TODO: basic_mul 加一个long long 参数的重载
     Int b = b1.basic_mul(norm);
@@ -555,22 +561,68 @@ std::pair<Int, Int> Int::knuth_divmod(const Int &a1, const Int &b1, long long ba
 
     for (long long i = a._val.size() - 1; i >= 0; i--) {
         r = r*base;
-        r._val[0] = a._val[i];
+        r = r + a._val[i];
         long long s1 = b._val.size() < r._val.size() ? r._val[b._val.size()] : 0;
         long long s2 = b._val.size() - 1 < r._val.size() ? r._val[b._val.size() - 1] : 0;
         long long d = (s1 * base + s2) / b._val.back();
+        // std::cout << i << "___________________ " << std::endl;
+        // std::cout << r.val() << std::endl;
+        // std::cout << (s1 * base + s2) << std::endl;
+        // std::cout << b.val() << std::endl;
+        // std::cout << d << std::endl;
+        
         r = r - b * d;
+        // std::cout << (b*d).val() << std::endl;
+        // std::cout << "___________________ " << std::endl;
         while (r < 0){
             r = r+b;
             d--;
         }
         q_vec[i] = d;
     }
-
+    // for(int i = q_vec.size()-1; i>=0;i--){
+    //     std::cout << q_vec[i] << " ";
+    // }
+    // std::cout << std::endl;
     Int q(q_vec,a1._is_positive == b1._is_positive);
     r._is_positive = a1._is_positive;
     while(!r._val.empty() && r._val.back() == 0){
         r._val.pop_back();
     }
-    return {q, r / norm};// TODO: 加一个Int 除以 long long 的除法 O(N)
+    // TODO: 这里可能会死循环
+    return {q, r.div_ll(norm)};// TODO: 加一个Int 除以 long long 的除法 O(N)
+}
+
+// b 小于this->_BASE 比较保险或者不能大于1e18
+Int Int::div_ll(long long b){
+    std::vector<long long> res(this->_units);
+    long long c = 0;
+    long long temp;
+    for(long long i = this->_units - 1; i >=0; i--){
+        temp = c*this->_BASE + this->_val[i];
+        // std::cout << i << " " << temp << std::endl;
+        res[i] = temp/b;
+        c = temp%b;
+    }
+    return Int(res);
+}
+
+// b 小于this->_BASE 比较保险或者不能大于1e18
+Int Int::mod_ll(long long b)const{
+    long long c = 0;
+    long long temp;
+    for(long long i = this->_units - 1; i >=0; i--){
+        temp = c*this->_BASE + this->_val[i];
+        // std::cout << i << " " << temp << std::endl;
+        c = temp%b;
+    }
+    return Int(c);
+}
+
+long long Int::mod5() const{
+    return this->_val[0]%5;
+}
+
+bool Int::isZero()const{
+    return this->_units == 1 && this->_val.back() == 0;
 }
