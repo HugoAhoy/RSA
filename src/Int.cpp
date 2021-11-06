@@ -443,10 +443,14 @@ Int Int::operator-(const Int &b) const{
 }
 
 Int Int::operator/(const Int &b) const{
+    if(b.isZero()){
+        std::cout << "divided by 0" << std::endl;
+        return Int(0);
+    }
     if(this->operator<(b)){
         return Int(0);
     }
-    return this->div_by_binary_search(*this, b);
+    return this->knuth_divmod(*this, b, this->_BASE).first;
 }
 
 std::pair<long long, Int> Int::get_reciprocal_by_newton(const Int &b, long long target_precision){
@@ -514,8 +518,7 @@ Int Int::operator%(const Int& b) const{
     if(this->operator<(b)){
         return *this;
     }
-    Int res = this->div_by_binary_search(*this, b);
-    return this->operator-(res*b);
+    return this->knuth_divmod(*this, b, this->_BASE).second;
 }
 
 Int Int::power(Int b, const Int &mod){
