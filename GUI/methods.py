@@ -58,6 +58,16 @@ def decrypt(proc, private_d, public_n, contents, label):
     print(res)
     label.config(text=' '.join(res))
 
+def test_decrypt(ciphertext, plaintext):
+    cipher = ciphertext.get("1.0","end")[:-1] # 总会多读一个\n [:-1]去掉多的\n
+    plaintext.delete("1.0","end")
+    plaintext.insert("insert", cipher.encode().hex())
+
+def test_encrypt(plaintext, ciphertext):
+    plain = plaintext.get("1.0","end")[:-1]
+    ciphertext.delete("1.0","end")
+    ciphertext.insert("insert", bytes.fromhex(plain).decode())
+
 def Decimal2Hex(num_d):
     return hex(int(num_d))
 
