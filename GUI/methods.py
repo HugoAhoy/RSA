@@ -16,47 +16,80 @@ def generate_key(proc, combo, pub_n_label, pub_e_label, priv_label):
     pub_e_label.config(text=Decimal2Hex(public_e))
     priv_label.config(text=Decimal2Hex(private_d))
 
+# l 是二进制长度
+def pad_hex(a, l):
+    a.lstrip("0x")
+    hex_l = l >> 2
+    len_to_pad = (hex_l - len(a)%hex_l)
+    if len_to_pad == hex_l:
+        len_to_pad = 0
+    return '0'*len_to_pad+a
+
+# l 是二进制长度
+def split_hex(a, l):
+    a = pad_hex(a, l)
+    hex_l = l>>2
+    parts = len(a) // hex_l
+    splited_hex = [a[i*hex_l:(i+1)*hex_l] for i in range(parts)]
+    return splited_hex
+
 # str-->hex-->int-->encrypt-->int-->hex
-def encrypt(proc, public_e, public_n, contents, label):
-    if not isinstance(contents,list):
-        contents = [contents]
-    res = []
-    part_len = len(contents)
+def encrypt(proc, public_e, public_n, contents, ciphertext):
+    ciphers = []
+    pub_e = public_e["text"].lstrip('0x').strip()
+    pub_n = public_n["text"].lstrip('0x').strip()
+    key_len = len(pub_n["text"])*4
+    plain = contents.get("1.0","end")[:-1]
+    plain_hex = plain.encode().hex()
+
+    splited_hex = split_hex(c_hex, key_len>>1)
+    part_len = len(splited_hex)
     proc.stdin.write(b"encrypt\n")
-    proc.stdin.write((str(public_e)+'\n').encode())
-    proc.stdin.write((str(public_n)+'\n').encode())
+    proc.stdin.write((str(int(pub_e,16))+'\n').encode())
+    proc.stdin.write((str(int(pub_n,16))+'\n').encode())
     proc.stdin.write((str(part_len)+'\n').encode())
     proc.stdin.flush()
-    for content in contents:
-        content = Hex2Decimal(content.encode().hex())
-        proc.stdin.write((str(content)+'\n').encode())
+    for content in splited_hex:
+        proc.stdin.write((str(int(content,16))+'\n').encode())
         proc.stdin.flush()
         encrypted = proc.stdout.readline().decode().strip()
-        res.append(encrypted)
-    res = map(Decimal2Hex, res)
-    print(res)
-    label.config(text=' '.join(res))
+        ciphers.append('0x'+pad_hex(hex(encrypted).lstrip('0x'),key_len))
+    # print(ciphers)
+    ciphertext.delete("1.0","end")
+    ciphertext.insert("insert", ' '.join(ciphers))
+    print("ciphertext:",ciphertext.get("1.0","end")[:-1])
+
 
 # hex-->int-->decrypt-->int-->hex-->str
-def decrypt(proc, private_d, public_n, contents, label):
-    if not isinstance(contents,list):
-        contents = [contents]
-    res = []
-    part_len = len(contents)
+def decrypt(proc, private_d, public_n, ciphertext, plaintext):
+    plains = []
+    priv_d = private_d["text"].lstrip('0x').strip()
+    pub_n = public_n["text"].lstrip('0x').strip()
+    key_len = len(pub_n["text"])*4
+    cipher_hex = ciphertext.get("1.0","end")[:-1]
+    splited_hex = ciphertext.split(' ')
+
+    part_len = len(splited_hex)
     proc.stdin.write(b"decrypt\n")
-    proc.stdin.write((str(private_d)+'\n').encode())
-    proc.stdin.write((str(public_n)+'\n').encode())
+    proc.stdin.write((str(int(priv_d,16))+'\n').encode())
+    proc.stdin.write((str(int(pub_n,16))+'\n').encode())
     proc.stdin.write((str(part_len)+'\n').encode())
     proc.stdin.flush()
-    for content in contents:
-        content = int(content,16)
+    first = True
+    for cipher in splited_hex:
+        content = int(cipher.lstrip('0x'), 16)
         proc.stdin.write((str(content)+'\n').encode())
         proc.stdin.flush()
-        encrypted = proc.stdout.readline().decode().strip()
-        res.append(encrypted)
-    res = map(Decimal2Hex2Str, res)
-    print(res)
-    label.config(text=' '.join(res))
+        decrypted = proc.stdout.readline().decode().strip()
+        if first:
+            plains.append(hex(decrypted).lstrip('0x'))
+            first = False
+        else:
+            plains.append(pad_hex(hex(decrypted).lstrip('0x'), key_len>>1))
+    # print(plains)
+    plaintext.delete("1.0","end")
+    plaintext.insert("insert", bytes.fromhex(''.join(plains)).decode())
+    print("plaintext:",plaintext.get("1.0","end")[:-1])
 
 def test_decrypt(ciphertext, plaintext):
     cipher = ciphertext.get("1.0","end")[:-1] # 总会多读一个\n [:-1]去掉多的\n
