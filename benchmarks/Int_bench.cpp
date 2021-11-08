@@ -41,6 +41,18 @@ static void Int_div_bs(benchmark::State& state) {
 }
 BENCHMARK(Int_div_bs);
 
+static void Int_div_newton(benchmark::State& state) {
+    Int a, b, res;
+    for (auto _ : state){
+        state.PauseTiming();
+        a = Random_Nbits_Int(2048);
+        b = Random_Nbits_Int(1024);
+        state.ResumeTiming();
+        a.newton_div(b);
+    }
+}
+BENCHMARK(Int_div_newton);
+
 static void Int_mod(benchmark::State& state) {
     Int a, b, res;
     for (auto _ : state){
@@ -78,7 +90,7 @@ static void Int_Karatsuba_mul(benchmark::State& state) {
 }
 BENCHMARK(Int_Karatsuba_mul);
 
-// 大数除法
+// Knuth除法
 static void Int_knuth_div(benchmark::State& state) {
     Int a, b, res;
     for (auto _ : state){

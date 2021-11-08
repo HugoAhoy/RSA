@@ -629,3 +629,17 @@ long long Int::mod5() const{
 bool Int::isZero()const{
     return this->_units == 1 && this->_val.back() == 0;
 }
+
+Int Int::newton_div(const Int &b){
+    if(this->operator<(b)){
+        return *this;
+    }
+    auto ret = this->get_reciprocal_by_newton(b, this->length());
+    Int res = this->operator*(ret.second);
+    res._div10(ret.first);
+    Int remainder = this->operator-(res*b);
+    if(remainder > b){
+        res = res + div_by_binary_search(remainder, b);
+    }
+    return res;
+}

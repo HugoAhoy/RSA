@@ -46,6 +46,7 @@ class Int{
     Int mod_ll(long long b)const;
     long long mod5() const;
     bool isZero()const;
+    Int newton_div(const Int &b);
 
     private:
     bool _is_positive;
