@@ -29,14 +29,6 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 message(status "Project Directory: ${PROJECT_SOURCE_DIR}")
 message("Build Type: ${CMAKE_BUILD_TYPE}")
 add_compile_options(-std=c++11)
-add_executable(
-  demo
-  main_test.cpp
-  src/Int.cpp
-  src/util.cpp
-  src/Karatsuba.cpp
-  src/RSA.cpp
-)
 
 add_executable(
   RSA
