@@ -64,7 +64,7 @@ en_content_encrypt = Text(frame2, height=5)  # 创建文本框控件，并制定
 
 en_open_privkey_btn = Button(frame2, text="打开公钥",command=lambda: read_public_key(en_public_n_Content, en_public_e_Content))
 
-en_encrypt_btn = Button(frame2, text="加密", command=lambda: test_encrypt(en_content_without_encrypt, en_content_encrypt))
+en_encrypt_btn = Button(frame2, text="加密", command=lambda: encrypt(en_public_e_Content,en_public_n_Content,en_content_without_encrypt, en_content_encrypt))
 
 # 解密标签页元素
 de_public_n_label = Label(frame3, text = "公钥N: ")
@@ -83,7 +83,7 @@ de_content_encrypt = Text(frame3, height=5)  # 创建文本框控件，并制定
 
 de_open_privkey_btn = Button(frame3, text="打开私钥",command=lambda: read_private_key(de_public_n_Content, de_priv_d_Content))
 
-de_encrypt_btn = Button(frame3, text="解密", command=lambda: test_decrypt(de_content_encrypt, de_content_without_encrypt))
+de_encrypt_btn = Button(frame3, text="解密", command=lambda: decrypt(de_priv_d_Content,de_public_n_Content,de_content_encrypt, de_content_without_encrypt))
 
 # 密钥生成标签页排版
 RSA_length.grid(column=1, row=0,sticky='w')
@@ -98,9 +98,9 @@ gen_btn.grid(column=3, row=0,sticky='w')
 save_btn.grid(column=4, row=0,sticky='w')
 
 # 加密标签页排版
-en_public_n_label.grid(column=0, row=1)
+en_public_n_label.grid(column=0, row=1,sticky='n')
 en_public_n_Content.grid(column=1, row=1)
-en_public_e_label.grid(column=0, row=2)
+en_public_e_label.grid(column=0, row=2,sticky='n')
 en_public_e_Content.grid(column=1, row=2)
 en_cwe_label.grid(column=0,row=4)
 en_content_without_encrypt.grid(column=1,row=4, columnspan=2)
@@ -110,9 +110,9 @@ en_open_privkey_btn.grid(column=1, row=0)
 en_encrypt_btn.grid(column=2, row=0)
 
 # 解密标签页排版
-de_public_n_label.grid(column=0, row=1)
+de_public_n_label.grid(column=0, row=1,sticky='n')
 de_public_n_Content.grid(column=1, row=1)
-de_priv_d_label.grid(column=0, row=2)
+de_priv_d_label.grid(column=0, row=2,sticky='n')
 de_priv_d_Content.grid(column=1, row=2)
 de_cwe_label.grid(column=0,row=4)
 de_content_without_encrypt.grid(column=1,row=4, columnspan=2)
